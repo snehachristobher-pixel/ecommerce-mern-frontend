@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import NavigationButtons from "../components/NavigationButtons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./PaymentMethod.css";
 
 const paymentOptions = [
   { label: "Credit/Debit Card", value: "card" },
@@ -40,10 +41,7 @@ const PaymentMethod = ({ setCart }) => {
 
     if (userId) {
       try {
-        // You may need to send auth header if required.
-        await axios.delete(`http://localhost:5000/api/cart/${userId}`, {
-          // headers: { Authorization: `Bearer ${token}` }
-        });
+        await axios.delete(`http://localhost:5000/api/cart/${userId}`);
         if (typeof setCart === "function") setCart({ items: [] });
       } catch (err) {
         setError("Failed to clear cart after payment!");
@@ -59,49 +57,46 @@ const PaymentMethod = ({ setCart }) => {
 
   if (orderConfirmed) {
     return (
-      <div
-        style={{
-          maxWidth: 400,
-          margin: "0 auto",
-          padding: 20,
-          textAlign: "center",
-        }}
-      >
-        <h2>Thank you for your order!</h2>
-        <p>
-          Your payment method: <b>{method}</b> has been received.
-        </p>
-        {loading && <p>Processing cart cleanup...</p>}
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <p>Redirecting to home page...</p>
+      <div className="payment-bg">
+        <div className="payment-confirmation">
+          <h2>Thank you for your order!</h2>
+          <p>
+            Your payment method: <b>{method}</b> has been received.
+          </p>
+          {loading && <p>Processing cart cleanup...</p>}
+          {error && <p className="error-message">{error}</p>}
+          <p>Redirecting to home page...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: "0 auto", padding: 20 }}>
-      <h2>Select Payment Method</h2>
-      <form onSubmit={handleSubmit}>
-        {paymentOptions.map((opt) => (
-          <div key={opt.value} style={{ marginBottom: 10 }}>
-            <input
-              type="radio"
-              id={opt.value}
-              name="payment"
-              value={opt.value}
-              checked={method === opt.value}
-              onChange={(e) => setMethod(e.target.value)}
-            />
-            <label htmlFor={opt.value} style={{ marginLeft: 8 }}>
-              {opt.label}
-            </label>
-          </div>
-        ))}
-        <button type="submit" style={{ marginTop: 20 }}>
-          Continue
-        </button>
-      </form>
-      <NavigationButtons prevPath="/cart" nextPath={null} />
+    <div className="payment-bg">
+      <div className="payment-container">
+        <h2 className="payment-title">Select Payment Method</h2>
+        <form onSubmit={handleSubmit} className="payment-form">
+          {paymentOptions.map((opt) => (
+            <div key={opt.value} className="payment-option">
+              <input
+                type="radio"
+                id={opt.value}
+                name="payment"
+                value={opt.value}
+                checked={method === opt.value}
+                onChange={(e) => setMethod(e.target.value)}
+              />
+              <label htmlFor={opt.value} className="payment-label">
+                {opt.label}
+              </label>
+            </div>
+          ))}
+          <button type="submit" className="payment-submit">
+            Continue
+          </button>
+        </form>
+        <NavigationButtons prevPath="/cart" nextPath={null} />
+      </div>
     </div>
   );
 };

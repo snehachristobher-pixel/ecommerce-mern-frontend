@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NavigationButtons from "../components/NavigationButtons";
 import { useNavigate } from "react-router-dom";
+import "./Cart.css"; // Import CSS file for cart page styling
 
 function Cart() {
   const [cart, setCart] = useState(null);
@@ -69,7 +70,15 @@ function Cart() {
   };
 
   if (!cart) return <p>Loading cart...</p>;
-  if (!cart.items || cart.items.length === 0) return <p>Your cart is empty.</p>;
+  if (!cart.items || cart.items.length === 0)
+    return (
+      <div className="cart-bg">
+        <div className="cart-page-bg">
+          <p className="cart-empty">Your cart is empty.</p>
+          <NavigationButtons prevPath="/petsales" nextPath={null} />
+        </div>
+      </div>
+    );
 
   const totalAmount = cart.items.reduce(
     (sum, item) =>
@@ -78,55 +87,57 @@ function Cart() {
   );
 
   return (
-    <div>
-      <h2>Your Cart</h2>
-      <ul style={{ listStyleType: "none", padding: 0 }}>
-        {cart.items
-          .filter((item) => item && item.product)
-          .map(({ product, qty }) => (
-            <li
-              key={product._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                borderBottom: "1px solid #ccc",
-                padding: "10px 0",
-                gap: 20,
-              }}
-            >
-              <img src={product.image} alt={product.name} width={100} />
-              <div>
-                <h4>{product.name}</h4>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <button
-                    onClick={() => updateQuantity(product._id, qty - 1)}
-                    disabled={qty <= 1}
-                  >
-                    -
-                  </button>
-                  <span>{qty}</span>
-                  <button onClick={() => updateQuantity(product._id, qty + 1)}>
-                    +
-                  </button>
+    <div className="cart-bg">
+      <div className="cart-page-bg">
+        <h2 className="cart-title">Your Cart</h2>
+        <ul className="cart-list">
+          {cart.items
+            .filter((item) => item && item.product)
+            .map(({ product, qty }) => (
+              <li key={product._id} className="cart-list-item">
+                <img
+                  className="cart-item-image"
+                  src={product.image}
+                  alt={product.name}
+                />
+                <div>
+                  <h4>{product.name}</h4>
+                  <div className="cart-controls">
+                    <button
+                      onClick={() => updateQuantity(product._id, qty - 1)}
+                      disabled={qty <= 1}
+                      className="qty-btn"
+                    >
+                      -
+                    </button>
+                    <span>{qty}</span>
+                    <button
+                      onClick={() => updateQuantity(product._id, qty + 1)}
+                      className="qty-btn"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <p>Price per unit: ₹{product.price}</p>
+                  <p>Total: ₹{product.price * qty}</p>
                 </div>
-                <p>Price per unit: ₹{product.price}</p>
-                <p>Total: ₹{product.price * qty}</p>
-              </div>
-              <button onClick={() => removeItem(product._id)}>Remove</button>
-            </li>
-          ))}
-      </ul>
-      <h3>Total Amount: ₹{totalAmount}</h3>
+                <button
+                  onClick={() => removeItem(product._id)}
+                  className="cart-remove-btn"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+        </ul>
+        <h3>Total Amount: ₹{totalAmount}</h3>
 
-      {/* Proceed to Payment */}
-      <button
-        style={{ margin: "20px 0", padding: "10px 30px" }}
-        onClick={() => navigate("/payment")}
-      >
-        Proceed to Payment
-      </button>
+        <button className="checkout-btn" onClick={() => navigate("/payment")}>
+          Proceed to Payment
+        </button>
 
-      <NavigationButtons prevPath="/petsales" nextPath={null} />
+        <NavigationButtons prevPath="/petsales" nextPath={null} />
+      </div>
     </div>
   );
 }

@@ -1,18 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import './NavigationButtons.css';
 
 const NavigationButtons = ({ prevPath, nextPath }) => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ marginTop: 20 }}>
+    <div className="nav-btn-group">
       {prevPath && (
-        <button onClick={() => navigate(prevPath)} style={{ marginRight: 10 }}>
+        <button onClick={() => navigate(prevPath)} className="nav-btn">
           &larr; Back
         </button>
       )}
       {nextPath && (
-        <button onClick={() => navigate(nextPath)}>
+        <button onClick={() => navigate(nextPath)} className="nav-btn">
           Next &rarr;
         </button>
       )}

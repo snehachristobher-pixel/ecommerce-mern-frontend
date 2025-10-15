@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NavigationButtons from "../components/NavigationButtons";
 import { useNavigate } from "react-router-dom";
+import "./PetAccessories.css"; // <-- Use the provided CSS file
 
-// If you have a separate fetchProducts utility, import and use it. Otherwise, use axios directly like below.
-const columns = 6;
+const columns = 3; // Consistent with grid layout
 
 const PetAccessories = () => {
   const [products, setProducts] = useState([]);
@@ -18,11 +18,7 @@ const PetAccessories = () => {
       setLoading(true);
       setError("");
       try {
-        // Option 1: using utility
-        // const data = await fetchProducts();
-        // Option 2: using axios directly
         const { data } = await axios.get("http://localhost:5000/api/products");
-        console.log("All Products:", data);
         const accessories = data.filter((p) => p.category === "Accessories");
         setProducts(accessories);
 
@@ -33,7 +29,6 @@ const PetAccessories = () => {
         setError(
           "Unable to load pet accessories. Please check your server and connection."
         );
-        console.error(err);
       }
       setLoading(false);
     }
@@ -64,7 +59,6 @@ const PetAccessories = () => {
       alert(`Added ${quantity} of ${product.name} to cart.`);
     } catch (error) {
       alert("Failed to add to cart. Please try again.");
-      console.error(error);
     }
   };
 
@@ -77,72 +71,65 @@ const PetAccessories = () => {
   if (error) return <div style={{ color: "red" }}>{error}</div>;
 
   return (
-    <div>
-      <h2>Pet Accessories</h2>
+    <div className="petsales-bg">
+      <h2 className="pets-title">Pet Accessories</h2>
       {products.length === 0 ? (
         <div>No accessories available.</div>
       ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
+        <div className="grid-container">
           {products.map((p) => (
-            <div
-              key={p._id}
-              style={{
-                border: "1px solid #ccc",
-                padding: 10,
-                width: 200,
-                minHeight: 350,
-              }}
-            >
+            <div className="pet-card" key={p._id}>
               <img
+                className="pet-img"
                 src={
                   p.image.startsWith("/images")
                     ? `http://localhost:5000${p.image}`
                     : p.image
                 }
                 alt={p.name}
-                width={180}
-                height={150}
-                style={{ objectFit: "cover" }}
               />
-              <h4>{p.name}</h4>
-              <p>{p.description}</p>
-              <p>
-                <b>Price:</b> ₹{p.price}
-              </p>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  marginTop: 10,
-                }}
-              >
-                <button onClick={() => handleQuantityChange(p._id, -1)}>
-                  -
-                </button>
-                <span>{quantities[p._id] || 1}</span>
-                <button onClick={() => handleQuantityChange(p._id, +1)}>
-                  +
+              <div className="pet-info">
+                <h4>{p.name}</h4>
+                <div className="pet-desc">{p.description}</div>
+                <div className="price">
+                  <b>Price:</b> ₹{p.price}
+                </div>
+              </div>
+              <div className="pet-footer">
+                <div className="cart-controls">
+                  <button
+                    className="cart-btn"
+                    onClick={() => handleQuantityChange(p._id, -1)}
+                  >
+                    -
+                  </button>
+                  <span>{quantities[p._id] || 1}</span>
+                  <button
+                    className="cart-btn"
+                    onClick={() => handleQuantityChange(p._id, +1)}
+                  >
+                    +
+                  </button>
+                </div>
+                <button
+                  className="cart-btn"
+                  style={{ width: "100%" }}
+                  onClick={() => addToCart(p, quantities[p._id] || 1)}
+                >
+                  Add to Cart
                 </button>
               </div>
-              <button
-                style={{ marginTop: 10, width: "100%", padding: 7 }}
-                onClick={() => addToCart(p, quantities[p._id] || 1)}
-              >
-                Add to Cart
-              </button>
             </div>
           ))}
           {placeholderArr.map((_, i) => (
             <div
               key={`placeholder-${i}`}
+              className="pet-card"
               style={{
-                border: "1px solid #ccc",
-                padding: 10,
-                width: 200,
-                minHeight: 350,
-                backgroundColor: "#f8f8f8",
-                opacity: 0.5,
+                opacity: 0.3,
+                background: "transparent",
+                border: "none",
+                boxShadow: "none",
               }}
             />
           ))}

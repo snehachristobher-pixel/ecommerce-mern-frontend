@@ -1,5 +1,7 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+import NavigationBar from './components/NavigationBar';
 
 import Home from './pages/Home';
 import Register from './pages/Register';
@@ -10,12 +12,13 @@ import PetAccessories from "./pages/PetAccessories";
 import PaymentMethod from "./pages/PaymentMethod";
 import Review from "./pages/Review";
 
+function AppContent() {
+  const location = useLocation();
+  const showNav = location.pathname !== '/'; // Hide on homepage only
 
-
-
-function App() {
   return (
-    <BrowserRouter>
+    <>
+      {showNav && <NavigationBar />}
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/register' element={<Register />} />
@@ -25,11 +28,15 @@ function App() {
         <Route path="/petAccessories" element={<PetAccessories />} />
         <Route path="/payment" element={<PaymentMethod />} />
         <Route path="/review" element={<Review />} />
-
-
-
-
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 }

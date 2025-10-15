@@ -1,0 +1,127 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=Roboto:wght@400;500&display=swap");
+
+.cart-bg {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('https://img.freepik.com/free-vector/frame-with-dogs-vector-white-background_53876-127700.jpg?w=2000')
+    no-repeat center center fixed;
+  background-size: cover;
+}
+
+.cart-page-bg {
+  min-height: 100vh;
+  background: rgba(237, 250, 255, 0.69);
+  font-family: "Nunito", "Roboto", sans-serif;
+  color: #163a43;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+}
+
+.cart-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #3087c6;
+  margin: 42px 0 30px 0;
+  letter-spacing: 1px;
+  font-family: "Nunito", "Roboto", sans-serif;
+  text-align: center;
+}
+
+.cart-list {
+  width: 90%;
+  max-width: 750px;
+  background: #fff;
+  padding: 34px 28px 22px 28px;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(48, 135, 198, 0.09);
+  margin-bottom: 28px;
+}
+
+.cart-list-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid #292c2e;
+  padding: 10px 0;
+  font-family: "Roboto", sans-serif;
+  color: #222;
+}
+
+.cart-item-image {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #f0f6fa;
+  box-shadow: 0 1px 5px rgba(48, 135, 198, 0.09);
+}
+
+.cart-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-btn,
+.cart-remove-btn {
+  background: #3087c6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 4px 13px;
+  cursor: pointer;
+  margin-right: 2px;
+  transition: background 0.2s;
+}
+.qty-btn:hover,
+.cart-remove-btn:hover {
+  background: #207ba9;
+}
+
+.cart-remove-btn {
+  margin-left: 14px;
+}
+
+h3 {
+  color: #3087c6;
+  font-weight: 700;
+  font-size: 1.22rem;
+  margin: 24px 0 0 0;
+}
+
+.checkout-btn {
+  background: linear-gradient(90deg, #44c5c0 0%, #3087c6 100%);
+  color: #8a7d7d;
+  font-family: "Nunito", "Roboto", sans-serif;
+  font-size: 1.14rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 0;
+  margin-top: 24px;
+  width: 240px;
+  max-width: 95%;
+  align-self: center;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.checkout-btn:hover {
+  background: linear-gradient(90deg, #3087c6 0%, #44c5c0 100%);
+}
+
+.cart-empty {
+  text-align: center;
+  margin: 54px 0 10px 0;
+  color: #6c7378;
+  font-size: 1.35rem;
+  font-weight: 500;
+}

@@ -1,0 +1,33 @@
+.nav-bar {
+  background-color: #3087c6;
+  padding: 12px 24px;
+  box-shadow: 0 4px 10px rgba(48, 135, 198, 0.25);
+  font-family: "Nunito", sans-serif;
+}
+
+.nav-bar ul {
+  list-style: none;
+  display: flex;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-bar li {
+}
+
+.nav-bar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 5px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-bar a:hover,
+.nav-bar a.active-link {
+  background-color: #225e8c;
+  color: #a2d2ff;
+}

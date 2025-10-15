@@ -1,11 +1,21 @@
-body {
+body,
+html,
+#root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
-  margin: 20px;
-  background-color: #f0f4f8;
+  background: url("https://img.freepik.com/free-vector/frame-with-dogs-vector-white-background_53876-127700.jpg?w=2000")
+    no-repeat center center fixed;
+  background-size: cover;
   color: #333;
 }
 
-h1, h2, h3 {
+/* Your existing styles below (unchanged, still applied) */
+
+h1,
+h2,
+h3 {
   color: #312b30;
 }
 
@@ -28,7 +38,7 @@ ul li {
 section {
   margin-bottom: 30px;
   padding: 20px;
-  background-color: white;
+  background-color: rgb(198, 188, 188);
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(26, 115, 232, 0.15);
 }

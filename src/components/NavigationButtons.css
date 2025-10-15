@@ -1,0 +1,35 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=Roboto:wght@400;500&display=swap");
+
+.nav-btn-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 32px;
+  margin-top: 25px;
+}
+
+.nav-btn {
+  background: linear-gradient(90deg, #3087c6 0%, #44c5c0 100%);
+  color: #fff;
+  font-family: 'Nunito', 'Roboto', sans-serif;
+  font-size: 1.12rem;
+  font-style: italic;
+  font-weight: 700;
+  border: none;
+  border-radius: 7px;
+  padding: 11px 32px;
+  margin: 0 8px 0 0;
+  cursor: pointer;
+  box-shadow: 0 1.5px 14px rgba(48,135,198,0.13);
+  transition: background 0.18s, transform 0.12s, color 0.13s;
+}
+
+.nav-btn:last-child {
+  margin-right: 0;
+}
+
+.nav-btn:hover {
+  background: linear-gradient(90deg, #44c5c0 0%, #3087c6 100%);
+  color: #ffe082;
+  transform: scale(1.06) translateY(-2px);
+}

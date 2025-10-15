@@ -1,0 +1,138 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap");
+
+/* Colorful background */
+.petsales-bg {
+  min-height: 100vh;
+  background: radial-gradient(
+    circle at 25% 25%,
+    #ffd6e0 20%,
+    #f3ffe2 50%,
+    #aee1fb 100%
+  );
+  font-family: "Poppins", sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+/* Title styling */
+.pets-title {
+  text-align: left;
+  font-size: 2.6rem;
+  margin: 38px 0 26px 30px;
+  color: #186c68;
+  font-weight: 700;
+}
+
+/* Responsive grid for max 4 columns */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(
+    3,
+    1fr
+  ); /* Show three cards per row on normal screens */
+  gap: 28px;
+  padding: 15px 35px 35px 35px;
+}
+
+@media (min-width: 1200px) {
+  .grid-container {
+    grid-template-columns: repeat(
+      4,
+      1fr
+    ); /* Show four cards per row only for wide screens */
+  }
+}
+
+/* All cards are the same height and flex layout for alignment */
+.pet-card {
+  background: linear-gradient(135deg, #fff3f3 60%, #d4f5ff 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(92, 195, 175, 0.15);
+  border: 2px solid #8de4c9;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 410px;
+  padding: 16px 14px 14px 14px;
+}
+
+/* Card hover effect */
+.pet-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 8px 18px rgba(92, 195, 175, 0.25);
+}
+
+/* Pet image style */
+.pet-card img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 110px; /* Fixed width for all images */
+  height: 110px; /* Fixed height for all images */
+  border-radius: 12px;
+  object-fit: contain; /* FULL image always visible, not cropped */
+  background: #f3ffe2; /* Fills empty space around images */
+  box-shadow: 0 4px 10px rgba(33, 160, 120, 0.13);
+  margin-bottom: 12px;
+}
+
+/* Card content: main info */
+.pet-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.pet-card h3,
+.pet-card h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #218e9e;
+  margin: 0 0 4px 0;
+}
+
+.pet-card .pet-desc {
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.pet-card .price {
+  color: #e77b7b;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+.pet-card .pet-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.cart-btn {
+  background: #5cc3af;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 2px;
+  transition: background-color 0.2s;
+}
+
+.cart-btn:hover {
+  background: #3d9b88;
+}
