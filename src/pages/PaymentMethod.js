@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import NavigationButtons from "../components/NavigationButtons";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const paymentOptions = [
   { label: "Credit/Debit Card", value: "card" },
@@ -9,18 +10,48 @@ const paymentOptions = [
   { label: "Cash on Delivery", value: "cod" },
 ];
 
-const PaymentMethod = () => {
+const PaymentMethod = ({ setCart }) => {
   const [method, setMethod] = useState("");
   const [orderConfirmed, setOrderConfirmed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const token = localStorage.getItem("token");
+  const userId = token
+    ? (() => {
+        try {
+          return JSON.parse(atob(token.split(".")[1])).id;
+        } catch {
+          return null;
+        }
+      })()
+    : null;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!method) {
       alert("Please select a payment method.");
       return;
     }
     setOrderConfirmed(true);
+    setLoading(true);
+    setError("");
+
+    if (userId) {
+      try {
+        // You may need to send auth header if required.
+        await axios.delete(`http://localhost:5000/api/cart/${userId}`, {
+          // headers: { Authorization: `Bearer ${token}` }
+        });
+        if (typeof setCart === "function") setCart({ items: [] });
+      } catch (err) {
+        setError("Failed to clear cart after payment!");
+        console.error("Failed to clear cart after payment:", err);
+      }
+    }
+
+    setLoading(false);
     setTimeout(() => {
       navigate("/");
     }, 3000);
@@ -28,9 +59,20 @@ const PaymentMethod = () => {
 
   if (orderConfirmed) {
     return (
-      <div style={{ maxWidth: 400, margin: "0 auto", padding: 20, textAlign: "center" }}>
+      <div
+        style={{
+          maxWidth: 400,
+          margin: "0 auto",
+          padding: 20,
+          textAlign: "center",
+        }}
+      >
         <h2>Thank you for your order!</h2>
-        <p>Your payment method: <b>{method}</b> has been received.</p>
+        <p>
+          Your payment method: <b>{method}</b> has been received.
+        </p>
+        {loading && <p>Processing cart cleanup...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
         <p>Redirecting to home page...</p>
       </div>
     );
@@ -55,7 +97,9 @@ const PaymentMethod = () => {
             </label>
           </div>
         ))}
-        <button type="submit" style={{ marginTop: 20 }}>Continue</button>
+        <button type="submit" style={{ marginTop: 20 }}>
+          Continue
+        </button>
       </form>
       <NavigationButtons prevPath="/cart" nextPath={null} />
     </div>

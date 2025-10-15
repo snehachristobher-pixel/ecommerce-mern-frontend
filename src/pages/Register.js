@@ -6,18 +6,32 @@ function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [message, setMessage] = useState("");
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", form);
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        form
+      );
       setMessage("Registration successful!");
       // Optionally clear form or redirect after registration
     } catch (err) {
-      setMessage("Error: " + err.response.data.message);
+      if (err.response) {
+        // Server responded with an error status
+        setMessage(
+          "Error: " + (err.response.data.message || "Registration failed")
+        );
+      } else if (err.request) {
+        // Request sent but no response received
+        setMessage("Error: No response from server. Please try again later.");
+      } else {
+        // Other errors
+        setMessage("Error: " + err.message);
+      }
     }
   };
 

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import NavigationButtons from "../components/NavigationButtons";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -16,7 +18,7 @@ function Login() {
       const res = await axios.post("http://localhost:5000/api/auth/login", form);
       localStorage.setItem("token", res.data.token);
       setMessage("Login successful!");
-      // Redirect or update UI on login success
+      navigate("/petsales"); // redirect to Pet Sales
     } catch (err) {
       setMessage("Invalid credentials");
     }
