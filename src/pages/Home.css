@@ -126,3 +126,9 @@
     font-size: 0.98rem;
   }
 }
+.owner-mark {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+  margin: -4px 0 8px; /* pulls it a bit closer to the title */
+}

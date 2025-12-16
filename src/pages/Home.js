@@ -11,6 +11,9 @@ const Home = () => {
         <div className="home-card">
           <section className="home-hero">
             <h1 className="home-title">Welcome to Pet Paradise!</h1>
+            {/* Owner mark just under the heading */}
+            <p className="owner-mark">© Sneha</p>
+
             <p className="home-subtitle">
               Your one-stop shop for pets and accessories!
             </p>
