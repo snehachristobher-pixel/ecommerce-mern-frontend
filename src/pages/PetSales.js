@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { fetchProducts } from "../api/products";
-import NavigationButtons from "../components/NavigationButtons";
+import { API_BASE } from "../api/config";
 import "./PetSales.css";
 
-const columns = 3; // show 3 per row by default
+const columns = 3;
 
 const PetSales = () => {
   const [products, setProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {
       const data = await fetchProducts();
       const pets = data.filter((p) => p.category === "Pets");
       setProducts(pets);
+
       const initialQuantities = {};
-      pets.forEach((p) => (initialQuantities[p._id] = 1));
+      pets.forEach((p) => {
+        initialQuantities[p._id] = 0; // start from 0
+      });
       setQuantities(initialQuantities);
     }
     load();
@@ -24,13 +29,15 @@ const PetSales = () => {
 
   const handleQuantityChange = (id, delta) => {
     setQuantities((prev) => {
-      const newQuantity = (prev[id] || 1) + delta;
-      if (newQuantity < 1) return prev;
+      const newQuantity = (prev[id] ?? 0) + delta;
+      if (newQuantity < 0) return prev;
       return { ...prev, [id]: newQuantity };
     });
   };
 
   const addToCart = async (product, quantity) => {
+    const finalQty = quantity === 0 ? 1 : quantity;
+
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Please login to add items to cart");
@@ -38,12 +45,12 @@ const PetSales = () => {
     }
     try {
       const userId = JSON.parse(atob(token.split(".")[1])).id;
-      await axios.post(`http://localhost:5000/api/cart/`, {
+      await axios.post(`${API_BASE}/api/cart/`, {
         userId,
         productId: product._id,
-        qty: quantity,
+        qty: finalQty,
       });
-      alert(`Added ${quantity} of ${product.name} to cart.`);
+      alert(`Added ${finalQty} of ${product.name} to cart.`);
     } catch (error) {
       console.error(
         "Error adding to cart:",
@@ -58,17 +65,20 @@ const PetSales = () => {
     null
   );
 
+  const handleBack = () => navigate("/login");
+  const handleNext = () => navigate("/petAccessories");
+
   return (
-    <div className="petsales-bg">
+    <div className="page-container">
       <h2 className="pets-title">Pets for Sale</h2>
-      <div className="grid-container">
+      <div className="card-grid">
         {products.map((p) => (
-          <div className="pet-card" key={p._id}>
+          <div className="card pet-card" key={p._id}>
             <img
               className="pet-img"
               src={
                 p.image.startsWith("/images")
-                  ? `http://localhost:5000${p.image}`
+                  ? `${API_BASE}${p.image}`
                   : p.image
               }
               alt={p.name}
@@ -85,21 +95,23 @@ const PetSales = () => {
                 <button
                   className="cart-btn"
                   onClick={() => handleQuantityChange(p._id, -1)}
+                  type="button"
                 >
                   -
                 </button>
-                <span>{quantities[p._id] || 1}</span>
+                <span>{quantities[p._id] ?? 0}</span>
                 <button
                   className="cart-btn"
                   onClick={() => handleQuantityChange(p._id, +1)}
+                  type="button"
                 >
                   +
                 </button>
               </div>
               <button
-                className="cart-btn"
-                style={{ width: "100%" }}
-                onClick={() => addToCart(p, quantities[p._id] || 1)}
+                className="cart-btn add-cart-btn"
+                onClick={() => addToCart(p, quantities[p._id] ?? 0)}
+                type="button"
               >
                 Add to Cart
               </button>
@@ -109,17 +121,20 @@ const PetSales = () => {
         {placeholderArr.map((_, i) => (
           <div
             key={`placeholder-${i}`}
-            className="pet-card"
-            style={{
-              opacity: 0.3,
-              background: "transparent",
-              border: "none",
-              boxShadow: "none",
-            }}
+            className="card pet-card placeholder-card"
           />
         ))}
       </div>
-      <NavigationButtons prevPath="/" nextPath="/petAccessories" />
+
+      {/* Styled Back / Next buttons under grid */}
+      <div className="card-nav-buttons">
+        <button type="button" className="nav-btn back-btn" onClick={handleBack}>
+          ← Back
+        </button>
+        <button type="button" className="nav-btn next-btn" onClick={handleNext}>
+          Next →
+        </button>
+      </div>
     </div>
   );
 };

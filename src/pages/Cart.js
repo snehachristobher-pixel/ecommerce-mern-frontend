@@ -1,23 +1,38 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import NavigationButtons from "../components/NavigationButtons";
 import { useNavigate } from "react-router-dom";
-import "./Cart.css"; // Import CSS file for cart page styling
+import { API_BASE } from "../api/config";
+import "./Cart.css";
 
 function Cart() {
-  const [cart, setCart] = useState(null);
-  const token = localStorage.getItem("token");
-  const userId = token ? JSON.parse(atob(token.split(".")[1])).id : null;
+  const [cart, setCart] = useState({ items: [] });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+  const userId =
+    token &&
+    (() => {
+      try {
+        return JSON.parse(atob(token.split(".")[1])).id;
+      } catch {
+        return null;
+      }
+    })();
 
   useEffect(() => {
     async function fetchCart() {
-      if (!userId) return;
+      if (!userId) {
+        setCart({ items: [] });
+        return;
+      }
       try {
-        const res = await axios.get(`http://localhost:5000/api/cart/${userId}`);
-        setCart(res.data);
-      } catch (error) {
-        console.error("Failed to fetch cart:", error);
+        const res = await axios.get(`${API_BASE}/api/cart/${userId}`);
+        const items = Array.isArray(res.data) ? res.data : res.data.items || [];
+        setCart({ items });
+      } catch (err) {
+        setError("Failed to fetch cart: " + (err.message || "Unknown error"));
+        setCart({ items: [] });
       }
     }
     fetchCart();
@@ -26,7 +41,7 @@ function Cart() {
   const updateQuantity = async (productId, newQty) => {
     if (!userId || newQty < 1) return;
     try {
-      await axios.put(`http://localhost:5000/api/cart/${userId}/${productId}`, {
+      await axios.put(`${API_BASE}/api/cart/${userId}/${productId}`, {
         quantity: newQty,
       });
       setCart((prevCart) => ({
@@ -37,48 +52,68 @@ function Cart() {
             : item
         ),
       }));
-    } catch (error) {
-      console.error("Failed to update quantity:", error);
+    } catch (err) {
+      setError(
+        "Failed to update quantity: " + (err.message || "Unknown error")
+      );
     }
   };
 
   const removeItem = async (productId) => {
     if (!userId) return;
     try {
-      await axios.delete(
-        `http://localhost:5000/api/cart/${userId}/${productId}`
-      );
+      await axios.delete(`${API_BASE}/api/cart/${userId}/${productId}`);
       setCart((prevCart) => ({
         ...prevCart,
         items: prevCart.items.filter(
           (item) => item.product && item.product._id !== productId
         ),
       }));
-    } catch (error) {
-      console.error("Failed to remove item:", error);
+    } catch (err) {
+      setError("Failed to remove item: " + (err.message || "Unknown error"));
     }
   };
 
-  const clearCart = async () => {
-    if (!userId) return;
-    try {
-      await axios.delete(`http://localhost:5000/api/cart/${userId}`);
-      setCart({ items: [] });
-    } catch (error) {
-      console.error("Failed to clear cart:", error);
-    }
-  };
+  const handleBack = () => navigate("/petAccessories");
+  const handleNext = () => navigate("/payment"); // go to Payment page
 
-  if (!cart) return <p>Loading cart...</p>;
-  if (!cart.items || cart.items.length === 0)
+  if (error) {
+    return (
+      <div className="cart-bg">
+        <div className="cart-page-bg">
+          <p style={{ color: "#d9534f" }}>{error}</p>
+          <div className="card-nav-buttons">
+            <button
+              type="button"
+              className="nav-btn back-btn"
+              onClick={handleBack}
+            >
+              ← Back
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!cart.items || cart.items.length === 0) {
     return (
       <div className="cart-bg">
         <div className="cart-page-bg">
           <p className="cart-empty">Your cart is empty.</p>
-          <NavigationButtons prevPath="/petsales" nextPath={null} />
+          <div className="card-nav-buttons">
+            <button
+              type="button"
+              className="nav-btn back-btn"
+              onClick={handleBack}
+            >
+              ← Back
+            </button>
+          </div>
         </div>
       </div>
     );
+  }
 
   const totalAmount = cart.items.reduce(
     (sum, item) =>
@@ -97,7 +132,11 @@ function Cart() {
               <li key={product._id} className="cart-list-item">
                 <img
                   className="cart-item-image"
-                  src={product.image}
+                  src={
+                    product.image?.startsWith("/images")
+                      ? `${API_BASE}${product.image}`
+                      : product.image
+                  }
                   alt={product.name}
                 />
                 <div>
@@ -132,11 +171,28 @@ function Cart() {
         </ul>
         <h3>Total Amount: ₹{totalAmount}</h3>
 
-        <button className="checkout-btn" onClick={() => navigate("/payment")}>
+        {/* Main checkout button */}
+        <button className="checkout-btn" onClick={handleNext}>
           Proceed to Payment
         </button>
 
-        <NavigationButtons prevPath="/petsales" nextPath={null} />
+        {/* Back / Next buttons */}
+        <div className="card-nav-buttons">
+          <button
+            type="button"
+            className="nav-btn back-btn"
+            onClick={handleBack}
+          >
+            ← Back
+          </button>
+          <button
+            type="button"
+            className="nav-btn next-btn"
+            onClick={handleNext}
+          >
+            Next →
+          </button>
+        </div>
       </div>
     </div>
   );

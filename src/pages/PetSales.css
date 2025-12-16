@@ -1,138 +1,156 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap");
-
-/* Colorful background */
-.petsales-bg {
-  min-height: 100vh;
-  background: radial-gradient(
-    circle at 25% 25%,
-    #ffd6e0 20%,
-    #f3ffe2 50%,
-    #aee1fb 100%
-  );
-  font-family: "Poppins", sans-serif;
-  padding: 0;
-  margin: 0;
+/* Page layout */
+.page-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 16px 40px;
 }
 
-/* Title styling */
 .pets-title {
-  text-align: left;
-  font-size: 2.6rem;
-  margin: 38px 0 26px 30px;
-  color: #186c68;
+  font-size: 28px;
   font-weight: 700;
+  color: #145c5c;
+  margin-bottom: 24px;
 }
 
-/* Responsive grid for max 4 columns */
-.grid-container {
+/* Cards grid */
+.card-grid {
   display: grid;
-  grid-template-columns: repeat(
-    3,
-    1fr
-  ); /* Show three cards per row on normal screens */
-  gap: 28px;
-  padding: 15px 35px 35px 35px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
 }
 
-@media (min-width: 1200px) {
-  .grid-container {
-    grid-template-columns: repeat(
-      4,
-      1fr
-    ); /* Show four cards per row only for wide screens */
-  }
-}
-
-/* All cards are the same height and flex layout for alignment */
-.pet-card {
-  background: linear-gradient(135deg, #fff3f3 60%, #d4f5ff 100%);
+.card.pet-card {
+  background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 4px 18px rgba(92, 195, 175, 0.15);
-  border: 2px solid #8de4c9;
-  text-align: left;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 410px;
-  padding: 16px 14px 14px 14px;
 }
 
-/* Card hover effect */
-.pet-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 8px 18px rgba(92, 195, 175, 0.25);
+.placeholder-card {
+  visibility: hidden;
 }
 
-/* Pet image style */
-.pet-card img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 110px; /* Fixed width for all images */
-  height: 110px; /* Fixed height for all images */
-  border-radius: 12px;
-  object-fit: contain; /* FULL image always visible, not cropped */
-  background: #f3ffe2; /* Fills empty space around images */
-  box-shadow: 0 4px 10px rgba(33, 160, 120, 0.13);
-  margin-bottom: 12px;
+.pet-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
 }
 
-/* Card content: main info */
 .pet-info {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  padding: 16px 18px 8px;
 }
 
-.pet-card h3,
-.pet-card h4 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #218e9e;
-  margin: 0 0 4px 0;
+.pet-info h4 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #145c5c;
 }
 
-.pet-card .pet-desc {
-  color: #555;
-  font-size: 0.95rem;
+.pet-desc {
+  font-size: 14px;
+  color: #555555;
   margin-bottom: 8px;
 }
 
-.pet-card .price {
-  color: #e77b7b;
-  font-size: 1rem;
-  font-weight: 700;
-  margin-top: 4px;
-  margin-bottom: 10px;
+.price {
+  font-size: 15px;
+  color: #333333;
 }
 
-.pet-card .pet-footer {
-  margin-top: auto;
+/* Footer inside each card */
+.pet-footer {
+  padding: 12px 18px 16px;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 .cart-controls {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 7px;
+  gap: 8px;
 }
 
+.cart-controls span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Buttons inside card */
 .cart-btn {
-  background: #5cc3af;
-  color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 5px 14px;
-  font-size: 0.95rem;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 2px;
-  transition: background-color 0.2s;
+  background-color: #0ea5e9;
+  color: #ffffff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 
 .cart-btn:hover {
-  background: #3d9b88;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.add-cart-btn {
+  background-color: #22c55e;
+}
+
+/* Back / Next buttons under grid (same style as other pages) */
+.card-nav-buttons {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.nav-btn {
+  min-width: 130px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  background: linear-gradient(90deg, #1e90ff, #00c6ff);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.nav-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.back-btn {
+  background: linear-gradient(90deg, #4a6cf7, #2dd4bf);
+}
+
+.next-btn {
+  background: linear-gradient(90deg, #06b6d4, #22c55e);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import NavigationButtons from "../components/NavigationButtons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE } from "../api/config";
 import "./PaymentMethod.css";
 
 const paymentOptions = [
@@ -19,29 +19,30 @@ const PaymentMethod = ({ setCart }) => {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const userId = token
-    ? (() => {
-        try {
-          return JSON.parse(atob(token.split(".")[1])).id;
-        } catch {
-          return null;
-        }
-      })()
-    : null;
+  const userId =
+    token &&
+    (() => {
+      try {
+        return JSON.parse(atob(token.split(".")[1])).id;
+      } catch {
+        return null;
+      }
+    })();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!method) {
-      alert("Please select a payment method.");
+      alert("Please select a payment method first.");
       return;
     }
+
     setOrderConfirmed(true);
     setLoading(true);
     setError("");
 
     if (userId) {
       try {
-        await axios.delete(`http://localhost:5000/api/cart/${userId}`);
+        await axios.delete(`${API_BASE}/api/cart/${userId}`);
         if (typeof setCart === "function") setCart({ items: [] });
       } catch (err) {
         setError("Failed to clear cart after payment!");
@@ -51,8 +52,20 @@ const PaymentMethod = ({ setCart }) => {
 
     setLoading(false);
     setTimeout(() => {
-      navigate("/");
-    }, 3000);
+      navigate("/review");
+    }, 1500);
+  };
+
+  const handleBack = () => navigate("/cart");
+
+  const handleNext = () => {
+    if (!method) {
+      alert(
+        "First finish your payment by selecting a method and clicking Continue."
+      );
+      return;
+    }
+    navigate("/review");
   };
 
   if (orderConfirmed) {
@@ -65,7 +78,7 @@ const PaymentMethod = ({ setCart }) => {
           </p>
           {loading && <p>Processing cart cleanup...</p>}
           {error && <p className="error-message">{error}</p>}
-          <p>Redirecting to home page...</p>
+          <p>Redirecting to review page...</p>
         </div>
       </div>
     );
@@ -95,7 +108,24 @@ const PaymentMethod = ({ setCart }) => {
             Continue
           </button>
         </form>
-        <NavigationButtons prevPath="/cart" nextPath={null} />
+
+        {/* Back / Next buttons under card */}
+        <div className="card-nav-buttons">
+          <button
+            type="button"
+            className="nav-btn back-btn"
+            onClick={handleBack}
+          >
+            ← Back
+          </button>
+          <button
+            type="button"
+            className="nav-btn next-btn"
+            onClick={handleNext}
+          >
+            Next →
+          </button>
+        </div>
       </div>
     </div>
   );

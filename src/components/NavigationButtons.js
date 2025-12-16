@@ -1,24 +1,51 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './NavigationButtons.css';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import "./NavigationBar.css";
 
-const NavigationButtons = ({ prevPath, nextPath }) => {
-  const navigate = useNavigate();
+const NavigationBar = () => {
+  const getClassName = ({ isActive }) => (isActive ? "active-link" : undefined);
 
   return (
-    <div className="nav-btn-group">
-      {prevPath && (
-        <button onClick={() => navigate(prevPath)} className="nav-btn">
-          &larr; Back
-        </button>
-      )}
-      {nextPath && (
-        <button onClick={() => navigate(nextPath)} className="nav-btn">
-          Next &rarr;
-        </button>
-      )}
-    </div>
+    <nav className="nav-bar">
+      <ul>
+        <li>
+          <NavLink to="/" className={getClassName} end>
+            Home
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/register" className={getClassName}>
+            Register
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/login" className={getClassName}>
+            Login
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/petsales" className={getClassName}>
+            Pet Sales
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/petAccessories" className={getClassName}>
+            Pet Accessories
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/cart" className={getClassName}>
+            Cart
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/review" className={getClassName}>
+            Review
+          </NavLink>
+        </li>
+      </ul>
+    </nav>
   );
 };
 
-export default NavigationButtons;
+export default NavigationBar;

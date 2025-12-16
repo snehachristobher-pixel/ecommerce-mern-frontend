@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import NavigationButtons from "../components/NavigationButtons";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:5000";
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -21,16 +22,30 @@ function Login() {
     setMessage("");
 
     try {
-      await axios.post(
-        "http://localhost:5000/api/auth/login",
-        form
+      const res = await axios.post(
+        `${API_BASE}/api/auth/login`,
+        {
+          email: form.email.trim(),
+          password: form.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      setMessage("Login successful!");
+
+      if (res.data && res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
+
+      setMessage("Login successful! Redirecting...");
       setMessageType("success");
       setForm({ email: "", password: "" });
+
       setTimeout(() => {
         navigate("/petsales");
-      }, 1200); // Optional: Delay for message to show
+      }, 800);
     } catch (err) {
       let errMsg = "Login failed";
       if (err.response && err.response.data && err.response.data.message) {
@@ -40,11 +55,15 @@ function Login() {
       } else if (err.message) {
         errMsg = err.message;
       }
-      setMessage("Error: " + errMsg);
+      setMessage(errMsg);
       setMessageType("error");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+
+  const handleBack = () => navigate("/");
+  const handleNext = () => navigate("/petsales");
 
   return (
     <div className="login-bg">
@@ -64,6 +83,7 @@ function Login() {
               disabled={loading}
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -78,10 +98,12 @@ function Login() {
               minLength={6}
             />
           </div>
+
           <button type="submit" className="form-btn" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
         {message && (
           <p
             className={`message ${messageType}`}
@@ -91,7 +113,26 @@ function Login() {
             {message}
           </p>
         )}
-        <NavigationButtons prevPath="/" nextPath="/register" />
+
+        {/* Styled Back / Next buttons under the card */}
+        <div className="card-nav-buttons">
+          <button
+            type="button"
+            className="nav-btn back-btn"
+            onClick={handleBack}
+            disabled={loading}
+          >
+            ← Back
+          </button>
+          <button
+            type="button"
+            className="nav-btn next-btn"
+            onClick={handleNext}
+            disabled={loading}
+          >
+            Next →
+          </button>
+        </div>
       </div>
     </div>
   );

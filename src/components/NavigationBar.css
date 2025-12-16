@@ -1,19 +1,24 @@
 .nav-bar {
+  width: 100%;
   background-color: #3087c6;
   padding: 12px 24px;
   box-shadow: 0 4px 10px rgba(48, 135, 198, 0.25);
   font-family: "Nunito", sans-serif;
 }
 
+/* Make nav items wrap and keep blue behind them */
 .nav-bar ul {
   list-style: none;
   display: flex;
+  flex-wrap: wrap; /* allow wrapping on small screens */
   gap: 18px;
   margin: 0;
   padding: 0;
+  background-color: inherit; /* same blue as nav-bar */
 }
 
 .nav-bar li {
+  /* optional: keep as block elements */
 }
 
 .nav-bar a {
@@ -24,6 +29,7 @@
   padding: 5px 8px;
   border-radius: 4px;
   transition: background-color 0.2s, color 0.2s;
+  display: block;
 }
 
 .nav-bar a:hover,

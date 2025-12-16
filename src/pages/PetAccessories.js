@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import NavigationButtons from "../components/NavigationButtons";
 import { useNavigate } from "react-router-dom";
-import "./PetAccessories.css"; // <-- Use the provided CSS file
+import { API_BASE } from "../api/config";
+import "./PetAccessories.css";
 
-const columns = 3; // Consistent with grid layout
+const columns = 3;
+
+const decodeToken = (token) => {
+  try {
+    const payload = token.split(".")[1];
+    return JSON.parse(atob(payload));
+  } catch {
+    return null;
+  }
+};
 
 const PetAccessories = () => {
   const [products, setProducts] = useState([]);
@@ -18,46 +27,58 @@ const PetAccessories = () => {
       setLoading(true);
       setError("");
       try {
-        const { data } = await axios.get("http://localhost:5000/api/products");
+        const { data } = await axios.get(`${API_BASE}/api/products`);
         const accessories = data.filter((p) => p.category === "Accessories");
         setProducts(accessories);
 
         const initialQuantities = {};
-        accessories.forEach((p) => (initialQuantities[p._id] = 1));
+        accessories.forEach((p) => {
+          initialQuantities[p._id] = 0;
+        });
         setQuantities(initialQuantities);
       } catch (err) {
         setError(
           "Unable to load pet accessories. Please check your server and connection."
         );
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     load();
   }, []);
 
   const handleQuantityChange = (id, delta) => {
     setQuantities((prev) => {
-      const newQuantity = (prev[id] || 1) + delta;
-      if (newQuantity < 1) return prev;
+      const newQuantity = (prev[id] ?? 0) + delta;
+      if (newQuantity < 0) return prev;
       return { ...prev, [id]: newQuantity };
     });
   };
 
   const addToCart = async (product, quantity) => {
+    const finalQty = quantity === 0 ? 1 : quantity;
+
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Please login to add items to cart");
       return;
     }
+
+    const decoded = decodeToken(token);
+    const userId = decoded?.id;
+    if (!userId) {
+      alert("Invalid login session. Please login again.");
+      return;
+    }
+
     try {
-      const userId = JSON.parse(atob(token.split(".")[1])).id;
-      await axios.post(`http://localhost:5000/api/cart/`, {
+      await axios.post(`${API_BASE}/api/cart/`, {
         userId,
         productId: product._id,
-        qty: quantity,
+        qty: finalQty,
       });
-      alert(`Added ${quantity} of ${product.name} to cart.`);
-    } catch (error) {
+      alert(`Added ${finalQty} of ${product.name} to cart.`);
+    } catch (err) {
       alert("Failed to add to cart. Please try again.");
     }
   };
@@ -67,23 +88,39 @@ const PetAccessories = () => {
     null
   );
 
-  if (loading) return <div>Loading pet accessories...</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
+  const handleBack = () => navigate("/petsales");
+  const handleNext = () => navigate("/cart");
+
+  if (loading) {
+    return (
+      <div className="page-container">
+        <p>Loading pet accessories...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page-container">
+        <p style={{ color: "red" }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="petsales-bg">
+    <div className="page-container">
       <h2 className="pets-title">Pet Accessories</h2>
       {products.length === 0 ? (
         <div>No accessories available.</div>
       ) : (
-        <div className="grid-container">
+        <div className="card-grid">
           {products.map((p) => (
-            <div className="pet-card" key={p._id}>
+            <div className="card pet-card" key={p._id}>
               <img
                 className="pet-img"
                 src={
-                  p.image.startsWith("/images")
-                    ? `http://localhost:5000${p.image}`
+                  p.image?.startsWith("/images")
+                    ? `${API_BASE}${p.image}`
                     : p.image
                 }
                 alt={p.name}
@@ -99,22 +136,24 @@ const PetAccessories = () => {
                 <div className="cart-controls">
                   <button
                     className="cart-btn"
+                    type="button"
                     onClick={() => handleQuantityChange(p._id, -1)}
                   >
                     -
                   </button>
-                  <span>{quantities[p._id] || 1}</span>
+                  <span>{quantities[p._id] ?? 0}</span>
                   <button
                     className="cart-btn"
+                    type="button"
                     onClick={() => handleQuantityChange(p._id, +1)}
                   >
                     +
                   </button>
                 </div>
                 <button
-                  className="cart-btn"
-                  style={{ width: "100%" }}
-                  onClick={() => addToCart(p, quantities[p._id] || 1)}
+                  className="cart-btn add-cart-btn"
+                  type="button"
+                  onClick={() => addToCart(p, quantities[p._id] ?? 0)}
                 >
                   Add to Cart
                 </button>
@@ -124,18 +163,21 @@ const PetAccessories = () => {
           {placeholderArr.map((_, i) => (
             <div
               key={`placeholder-${i}`}
-              className="pet-card"
-              style={{
-                opacity: 0.3,
-                background: "transparent",
-                border: "none",
-                boxShadow: "none",
-              }}
+              className="card pet-card placeholder-card"
             />
           ))}
         </div>
       )}
-      <NavigationButtons prevPath="/petSales" nextPath="/cart" />
+
+      {/* Styled Back / Next buttons under grid */}
+      <div className="card-nav-buttons">
+        <button type="button" className="nav-btn back-btn" onClick={handleBack}>
+          ← Back
+        </button>
+        <button type="button" className="nav-btn next-btn" onClick={handleNext}>
+          Next →
+        </button>
+      </div>
     </div>
   );
 };
