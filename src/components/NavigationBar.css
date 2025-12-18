@@ -17,10 +17,6 @@
   background-color: inherit; /* same blue as nav-bar */
 }
 
-.nav-bar li {
-  /* optional: keep as block elements */
-}
-
 .nav-bar a {
   color: #fff;
   text-decoration: none;
